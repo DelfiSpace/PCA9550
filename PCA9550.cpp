@@ -61,58 +61,44 @@ unsigned char PCA9550::getDC(unsigned char channel)
     }
 }
 
-void PCA9550::setLED(unsigned char led, unsigned char status)
+void PCA9550::setOutput(unsigned char led, unsigned char status)
 {
     unsigned char tmp = readRegister(REG_LS0);
     if (led == 0)
     {
         if (status)
         {
-	        writeRegister(REG_LS0, tmp & ~0x01);
+	        writeRegister(REG_LS0, tmp | 0x01);
 	    }
 	    else
 	    {
-	    	writeRegister(REG_LS0, tmp | 0x01);
+	    	writeRegister(REG_LS0, tmp & ~0x01);
 	    }
 	}
 	else
 	{
 	    if (status)
         {
-	        writeRegister(REG_LS0, tmp & ~0x04);
+	        writeRegister(REG_LS0, tmp | 0x04);
 	    }
 	    else
 	    {
-	    	writeRegister(REG_LS0, tmp | 0x04);
+	    	writeRegister(REG_LS0, tmp & ~0x04);
 	    }
 	}
 }
 
-void PCA9550::setLED(unsigned char led)
+unsigned char PCA9550::getInput(unsigned char led)
 {
-    unsigned char tmp = readRegister(REG_LS0);
-    if (led == 0)
+    unsigned char tmp = readRegister(REG_INPUT);
+    if (led)
     {
-        if (status)
-        {
-	        writeRegister(REG_LS0, tmp & ~0x01);
-	    }
-	    else
-	    {
-	    	writeRegister(REG_LS0, tmp | 0x01);
-	    }
-	}
-	else
-	{
-	    if (status)
-        {
-	        writeRegister(REG_LS0, tmp & ~0x04);
-	    }
-	    else
-	    {
-	    	writeRegister(REG_LS0, tmp | 0x04);
-	    }
-	}
+        writeRegister(REG_LS0, (tmp >> 1) & 0x01);
+    }
+    else
+    {
+    	writeRegister(REG_LS0, tmp & 0x01);
+    }
 }
 
 void PCA9550::blinkLED(unsigned char led, unsigned char channel)

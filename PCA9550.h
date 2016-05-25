@@ -15,6 +15,9 @@ class PCA9550
 {
 protected:
     unsigned char address;
+    
+    unsigned short readRegister(unsigned char);
+    void writeRegister(unsigned char, unsigned char); 
 
 public:
 
@@ -25,12 +28,9 @@ public:
     float getPeriod(unsigned char);
     void setDC(unsigned char, unsigned char);
     unsigned char getDC(unsigned char);
-    void setLED(unsigned char, unsigned char);
+    void setOutput(unsigned char, unsigned char);
+    unsigned char getInput(unsigned char);
     void blinkLED(unsigned char, unsigned char);
-    
-    unsigned short readSingleChannel();
-    unsigned short readRegister(unsigned char);
-    void writeRegister(unsigned char, unsigned char); 
 
 private:
   
