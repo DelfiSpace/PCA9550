@@ -2,7 +2,7 @@
 #define __PCA9550_H__
 
 #include "Energia.h"
-#include <Wire.h>
+#include <DWire.h>
 
 #define REG_INPUT		0
 #define REG_PSC0		1
@@ -14,6 +14,7 @@
 class PCA9550
 {
 protected:
+    DWire *wire;
     unsigned char address;
     
     unsigned short readRegister(unsigned char);
@@ -21,7 +22,7 @@ protected:
 
 public:
 
-    PCA9550(unsigned char);
+    PCA9550(DWire *, unsigned char);
     virtual ~PCA9550() {};
     
     void setPeriod(unsigned char, float);
