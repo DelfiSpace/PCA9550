@@ -5,12 +5,11 @@
  *   PCA9550 class creator function
  *   
  *   Parameters:
- *   DWire *i2c             I2C object pointer
+ *   DWire &i2c             I2C object
  *
  */
-PCA9550:: PCA9550(DWire *i2c, unsigned char addr)
+PCA9550:: PCA9550(DWire &i2c, unsigned char addr): wire(i2c)
 {
-    wire = i2c;
     address = addr;
 }
 
@@ -130,16 +129,16 @@ void PCA9550::blinkLED(unsigned char led, unsigned char channel)
 unsigned short PCA9550::readRegister(unsigned char reg)
 {
     unsigned char ret = -1;
-    wire->beginTransmission(address);
-    wire->write(reg);
+    wire.beginTransmission(address);
+    wire.write(reg);
   
     // use the casting to prevent warning on ambiguous conversion
-    if (wire->requestFrom(address, (unsigned char)1) == 1)
+    if (wire.requestFrom(address, (unsigned char)1) == 1)
     {
-        ret = wire->read();
+        ret = wire.read();
     }
 
-    wire->endTransmission(true);
+    wire.endTransmission(true);
     return ret;
 }
 
@@ -155,9 +154,9 @@ unsigned short PCA9550::readRegister(unsigned char reg)
  */
 void PCA9550::writeRegister(unsigned char reg, unsigned char val)
 {
-    wire->beginTransmission(address);
-    wire->write(reg);    
-    wire->write(val);    
+    wire.beginTransmission(address);
+    wire.write(reg);    
+    wire.write(val);    
 
-    wire->endTransmission(true);
+    wire.endTransmission(true);
 }

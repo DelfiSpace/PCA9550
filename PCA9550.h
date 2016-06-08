@@ -14,15 +14,14 @@
 class PCA9550
 {
 protected:
-    DWire *wire;
+    DWire &wire;
     unsigned char address;
     
     unsigned short readRegister(unsigned char);
     void writeRegister(unsigned char, unsigned char); 
 
 public:
-
-    PCA9550(DWire *, unsigned char);
+    PCA9550(DWire&, unsigned char);
     virtual ~PCA9550() {};
     
     void setPeriod(unsigned char, float);
