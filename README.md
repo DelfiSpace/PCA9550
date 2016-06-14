@@ -1,0 +1,2 @@
+# PCA9550
+A library to provide high level APIs to interface with the NXP PCA9550 LED driver. It is possible to use this library in Energia (the Arduino port for MSP microcontrollers) or in other toolchains.
