@@ -74,29 +74,29 @@ unsigned char PCA9550::getDC(unsigned char channel)
     }
 }
 
-void PCA9550::setOutput(unsigned char led, unsigned char status)
+void PCA9550::setLED(unsigned char led, unsigned char status)
 {
     unsigned char tmp = readRegister(REG_LS0);
     if (led == 0)
     {
         if (status)
         {
-	        writeRegister(REG_LS0, tmp | 0x01);
+	        writeRegister(REG_LS0, (tmp & 0xFC));
 	    }
 	    else
 	    {
-	    	writeRegister(REG_LS0, tmp & ~0x01);
+	    	writeRegister(REG_LS0, (tmp & 0xFC) | 0x01);
 	    }
 	}
 	else
 	{
 	    if (status)
         {
-	        writeRegister(REG_LS0, tmp | 0x04);
+	        writeRegister(REG_LS0, (tmp & 0xFC));
 	    }
 	    else
 	    {
-	    	writeRegister(REG_LS0, tmp & ~0x04);
+	    	writeRegister(REG_LS0, (tmp & 0xFC) | 0x04);
 	    }
 	}
 }
@@ -116,14 +116,14 @@ unsigned char PCA9550::getInput(unsigned char led)
 
 void PCA9550::blinkLED(unsigned char led, unsigned char channel)
 {
-    unsigned char tmp = readRegister(REG_LS0) & 0xF0;
+    unsigned char tmp = readRegister(REG_LS0);
     if (led == 0)
     {
-        writeRegister(REG_LS0, tmp | 0x02 | (channel & 0x01));
+        writeRegister(REG_LS0, (tmp & 0xFC) | 0x02 | (channel & 0x01));
 	}
 	else
 	{
-	    writeRegister(REG_LS0, tmp | (0x02 | (channel & 0x01)) << 2);
+	    writeRegister(REG_LS0, (tmp & 0xF3) | 0x08 | ((channel & 0x01) << 2));
 	}	
 }
 
@@ -144,14 +144,14 @@ unsigned short PCA9550::readRegister(unsigned char reg)
     unsigned char ret = -1;
     wire.beginTransmission(address);
     wire.write(reg);
+    wire.endTransmission(false);
   
     // use the casting to prevent warning on ambiguous conversion
     if (wire.requestFrom(address, (unsigned char)1) == 1)
     {
         ret = wire.read();
     }
-
-    wire.endTransmission(true);
+    
     return ret;
 }
 
@@ -159,7 +159,6 @@ unsigned short PCA9550::readRegister(unsigned char reg)
  *
  *   Sets the value of the selected internal register
  *   
- *
  *   Parameters:
  *   unsigned char reg     register number
  *   unsigned short        register value
@@ -170,6 +169,6 @@ void PCA9550::writeRegister(unsigned char reg, unsigned char val)
     wire.beginTransmission(address);
     wire.write(reg);    
     wire.write(val);    
-
-    wire.endTransmission(true);
+    wire.endTransmission();
+    delay(10);
 }

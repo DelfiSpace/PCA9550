@@ -41,7 +41,7 @@ public:
     float getPeriod(unsigned char);
     void setDC(unsigned char, unsigned char);
     unsigned char getDC(unsigned char);
-    void setOutput(unsigned char, unsigned char);
+    void setLED(unsigned char, unsigned char);
     unsigned char getInput(unsigned char);
     void blinkLED(unsigned char, unsigned char);
 
