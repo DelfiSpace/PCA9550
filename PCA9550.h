@@ -14,7 +14,7 @@
 #ifndef __PCA9550_H__
 #define __PCA9550_H__
 
-#include "Energia.h"
+#include <Energia.h>
 #include <DWire.h>
 
 #define REG_INPUT		0

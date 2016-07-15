@@ -11,7 +11,7 @@
  *
  */
  
-#include "PCA9550.h"
+#include <PCA9550.h>
 
 /**
  *
@@ -144,10 +144,9 @@ unsigned short PCA9550::readRegister(unsigned char reg)
     unsigned char ret = -1;
     wire.beginTransmission(address);
     wire.write(reg);
-    wire.endTransmission(false);
   
-    // use the casting to prevent warning on ambiguous conversion
-    if (wire.requestFrom(address, (unsigned char)1) == 1)
+    if (wire.requestFrom(address, 1) == 1)
+    
     {
         ret = wire.read();
     }
@@ -170,5 +169,4 @@ void PCA9550::writeRegister(unsigned char reg, unsigned char val)
     wire.write(reg);    
     wire.write(val);    
     wire.endTransmission();
-    delay(10);
 }
