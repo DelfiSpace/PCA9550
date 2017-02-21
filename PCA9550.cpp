@@ -21,110 +21,52 @@
  *   DWire &i2c             I2C object
  *
  */
-PCA9550:: PCA9550(DWire &i2c, unsigned char addr): wire(i2c)
+PCA9550::PCA9550(DWire &i2c, unsigned char addr): wire(i2c)
 {
     address = addr;
 }
 
-void PCA9550::setPeriod(unsigned char channel, float period)
+void PCA9550::setPeriod(float period)
 {
-    if (channel == 0)
-    {
-        writeRegister(REG_PSC0, (unsigned  int)((period * 44.0) - 1) & 0xFF);
-    }
-    else
-    {
-        writeRegister(REG_PSC1, (unsigned  int)((period * 44.0) - 1) & 0xFF);
-    }
+    writeRegister(REG_PSC0, (unsigned  int)((period * 44.0) - 1) & 0xFF);
 }
 
-float PCA9550::getPeriod(unsigned char channel)
+float PCA9550::getPeriod()
 {
-    if (channel == 0)
-    {
-        return ((float)readRegister(REG_PSC0) + 1.0) / 44.0;
-    }
-    else
-    {
-        return ((float)readRegister(REG_PSC1) + 1.0) / 44.0;
-    }
+    return ((float)readRegister(REG_PSC0) + 1.0) / 44.0;
 }
 
-void PCA9550::setDC(unsigned char channel, unsigned char dc)
+void PCA9550::setDC(unsigned char dc)
 {
-    if (channel == 0)
-    {
-        writeRegister(REG_PWM0, 255 - dc);
-    }
-    else
-    {
-        writeRegister(REG_PWM1, 255 - dc);
-    }
+    writeRegister(REG_PWM0, 255 - dc);
 }
 
-unsigned char PCA9550::getDC(unsigned char channel)
+unsigned char PCA9550::getDC()
 {
-    if (channel == 0)
-    {
-        return 255 - readRegister(REG_PWM0);
-    }
-    else
-    {
-        return 255- readRegister(REG_PWM1);
-    }
+    return 255 - readRegister(REG_PWM0);
+
 }
 
-void PCA9550::setLED(unsigned char led, unsigned char status)
+void PCA9550::setLED(unsigned char status)
 {
-    unsigned char tmp = readRegister(REG_LS0);
-    if (led == 0)
-    {
-        if (status)
-        {
-	        writeRegister(REG_LS0, (tmp & 0xFC));
-	    }
-	    else
-	    {
-	    	writeRegister(REG_LS0, (tmp & 0xFC) | 0x01);
-	    }
+    if (status)
+	{
+		writeRegister(REG_LS0, LED1_OFF | LED0_ON);
 	}
 	else
 	{
-	    if (status)
-        {
-	        writeRegister(REG_LS0, (tmp & 0xFC));
-	    }
-	    else
-	    {
-	    	writeRegister(REG_LS0, (tmp & 0xFC) | 0x04);
-	    }
+		writeRegister(REG_LS0, LED1_OFF | LED0_OFF);
 	}
 }
 
-unsigned char PCA9550::getInput(unsigned char led)
+unsigned char PCA9550::getInput()
 {
-    unsigned char tmp = readRegister(REG_INPUT);
-    if (led)
-    {
-        writeRegister(REG_LS0, (tmp >> 1) & 0x01);
-    }
-    else
-    {
-    	writeRegister(REG_LS0, tmp & 0x01);
-    }
+    return (readRegister(REG_INPUT) & LED0_MASK) == LED0_ON;
 }
 
-void PCA9550::blinkLED(unsigned char led, unsigned char channel)
+void PCA9550::blinkLED()
 {
-    unsigned char tmp = readRegister(REG_LS0);
-    if (led == 0)
-    {
-        writeRegister(REG_LS0, (tmp & 0xFC) | 0x02 | (channel & 0x01));
-	}
-	else
-	{
-	    writeRegister(REG_LS0, (tmp & 0xF3) | 0x08 | ((channel & 0x01) << 2));
-	}	
+    writeRegister(REG_LS0, LED1_OFF | LED0_BLINK);
 }
 
 /**
@@ -139,19 +81,17 @@ void PCA9550::blinkLED(unsigned char led, unsigned char channel)
  *   unsigned short        register value
  *
  */
-unsigned short PCA9550::readRegister(unsigned char reg)
+unsigned char PCA9550::readRegister(unsigned char reg)
 {
-    unsigned char ret = -1;
     wire.beginTransmission(address);
     wire.write(reg);
-  
-    if (wire.requestFrom(address, 1) == 1)
-    
+
+    if ( wire.requestFrom(address, 1) == 1)
     {
-        ret = wire.read();
+        return wire.read();
     }
     
-    return ret;
+    return -1;
 }
 
 /**

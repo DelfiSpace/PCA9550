@@ -14,39 +14,41 @@
 #ifndef __PCA9550_H__
 #define __PCA9550_H__
 
-#include <Energia.h>
 #include <DWire.h>
 
-#define REG_INPUT		0
-#define REG_PSC0		1
-#define REG_PWM0		2
-#define REG_PSC1		3
-#define REG_PWM1		4
-#define REG_LS0			5
+#define REG_INPUT		0x00
+#define REG_PSC0		0x01
+#define REG_PWM0		0x02
+#define REG_PSC1		0x03
+#define REG_PWM1		0x04
+#define REG_LS0			0x05
+
+#define LED1_OFF		0x04
+#define LED0_OFF		0x01
+#define LED0_BLINK		0x02
+#define LED0_ON			0x00
+#define LED0_MASK		0x03
 
 class PCA9550
 {
-protected:
-    DWire &wire;
-    unsigned char address;
-    
-    unsigned short readRegister(unsigned char);
-    void writeRegister(unsigned char, unsigned char); 
-
 public:
     PCA9550(DWire&, unsigned char);
     virtual ~PCA9550() {};
     
-    void setPeriod(unsigned char, float);
-    float getPeriod(unsigned char);
-    void setDC(unsigned char, unsigned char);
-    unsigned char getDC(unsigned char);
-    void setLED(unsigned char, unsigned char);
-    unsigned char getInput(unsigned char);
-    void blinkLED(unsigned char, unsigned char);
-
+    void setPeriod(float);
+    float getPeriod();
+    void setDC(unsigned char);
+    unsigned char getDC();
+    void setLED( unsigned char);
+    unsigned char getInput();
+    void blinkLED();
+ 
+    unsigned char readRegister(unsigned char);
+    void writeRegister(unsigned char, unsigned char);
+    
 private:
-  
+    DWire &wire;
+    unsigned char address;
 };
 
 #endif // __PCA9550_H__ 
